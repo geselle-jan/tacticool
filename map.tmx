@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="10" tilewidth="16" tileheight="16">
+ <tileset firstgid="1" name="collision" tilewidth="16" tileheight="16">
+  <image source="collision.png" width="112" height="16"/>
+ </tileset>
+ <layer name="collision" width="15" height="10">
+  <data encoding="csv">
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,
+1,0,0,0,0,0,0,0,0,0,1,0,0,0,1,
+1,0,0,0,1,0,0,1,0,0,1,0,0,0,1,
+1,1,0,1,1,0,0,1,0,0,1,0,0,0,1,
+1,0,0,0,0,0,0,1,0,0,1,0,0,0,1,
+1,0,0,0,1,0,0,1,0,0,1,1,0,0,1,
+1,0,0,0,1,0,0,1,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+</data>
+ </layer>
+</map>
