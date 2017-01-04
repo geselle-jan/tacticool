@@ -94,14 +94,10 @@ class Unit(Rectangle):
         if not y:
             y = self.position[1]
         out = {}
-        out["UL"] = func(x - 16, y - 16)
-        out["UM"] = func(x - 16, y     )
-        out["UR"] = func(x - 16, y + 61)
-        out["ML"] = func(x     , y - 16)
-        out["MR"] = func(x     , y + 16)
-        out["LL"] = func(x + 16, y - 16)
-        out["LM"] = func(x + 16, y     )
-        out["LR"] = func(x + 16, y + 16)
+        out["T"] = func(x - 16, y     )
+        out["L"] = func(x     , y - 16)
+        out["R"] = func(x     , y + 16)
+        out["B"] = func(x + 16, y     )
         return out
 
 
