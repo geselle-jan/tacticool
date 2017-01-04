@@ -27,17 +27,20 @@ class Rectangle():
 class Unit(Rectangle):
     """A class for units."""
     def __init__(self):
-        Rectangle.__init__(self, [16,16], [16,16], [241,241,241])
+        Rectangle.__init__(self, [16,32], [16,16], [241,241,241])
         self.movementPattern = [
-            [0, -2],
-            [-1, -1], [0, -1], [1, -1],
-            [-2, 0], [-1, 0], [1, 0], [2, 0],
-            [-1, 1], [0, 1], [1, 1],
-            [0, 2]
+                                          [ 0, -3],
+                                [-1, -2], [ 0, -2], [ 1, -2],
+                      [-2, -1], [-1, -1], [ 0, -1], [ 1, -1], [ 2, -1],
+            [-3,  0], [-2,  0], [-1,  0],           [ 1,  0], [ 2,  0], [ 3,  0],
+                      [-2,  1], [-1,  1], [ 0,  1], [ 1,  1], [ 2,  1],
+                                [-1,  2], [ 0,  2], [ 1,  2],
+                                          [ 0,  3],
         ]
+        self.legalMovementPattern = self.movementPattern[:]
         self.showMovement = False
         self.movementRectangles = []
-        for position in self.movementPattern:
+        for position in self.legalMovementPattern:
             realPosition = [x + y for x, y in zip(self.position, [coordinate * 16 for coordinate in position])]
             self.movementRectangles.append(
                 Rectangle(realPosition, self.size, [0, 255, 0], 1)
@@ -45,8 +48,8 @@ class Unit(Rectangle):
 
     def move(self, x, y):
         Rectangle.move(self, x, y)
-        for index, elem in enumerate(self.movementRectangles):
-            self.movementRectangles[index].move(x, y)
+        """for index, elem in enumerate(self.movementRectangles):
+            self.movementRectangles[index].move(x, y)"""
 
     def draw(self, surface):
         Rectangle.draw(self, surface)
@@ -58,8 +61,6 @@ class Unit(Rectangle):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = pygame.mouse.get_pos()
-                if self.rect.collidepoint(pos):
-                    self.showMovement = not self.showMovement
                 if self.showMovement:
                     for movementRectangle in self.movementRectangles:
                         if movementRectangle.rect.collidepoint(pos):
@@ -67,18 +68,68 @@ class Unit(Rectangle):
                             deltaY = movementRectangle.rect.top - self.rect.top
                             self.move(deltaX, deltaY)
                             self.showMovement = False
+                elif self.rect.collidepoint(pos):
+                    unitPosition = (self.rect.left, self.rect.top)
+                    self.movementRectangles = []
+                    self.generateLegalMovementPattern()
+                    for position in self.legalMovementPattern:
+                        realPosition = [x + y for x, y in zip(unitPosition, [coordinate * 16 for coordinate in position])]
+                        self.movementRectangles.append(
+                            Rectangle(realPosition, self.size, [0, 255, 0], 1)
+                        )
+                    self.showMovement = not self.showMovement
 
     def checkSurrounding(self,func,x = False, y = False):
+        unitPosition = (self.rect.left, self.rect.top)
         if not x:
-            x = self.position[0]
+            x = unitPosition[0]
         if not y:
-            y = self.position[1]
+            y = unitPosition[1]
         out = {}
-        out["T"] = func(x - 16, y     )
-        out["L"] = func(x     , y - 16)
-        out["R"] = func(x     , y + 16)
-        out["B"] = func(x + 16, y     )
+        out["T"] = func(x     , y - 16)
+        out["L"] = func(x - 16, y     )
+        out["B"] = func(x     , y + 16)
+        out["R"] = func(x + 16, y     )
         return out
+
+    def isOnPlayer(self, x, y):
+        return x == self.rect.left and y == self.rect.top
+
+    def isReachable(self, x, y):
+        unitPosition = (self.rect.left, self.rect.top)
+        #realPosition = [x - y for x, y in zip([int(coordinate / 16) for coordinate in unitPosition], [int(coordinate / 16) for coordinate in (x, y)])]
+        realX = int(x / 16) - int(math.floor(unitPosition[0] / 16))
+        realY = int(y / 16) - int(math.floor(unitPosition[1] / 16))
+        print [realX, realY]
+        return [realX, realY] in self.legalMovementPattern
+
+    def generateLegalMovementPattern(self):
+        unitPosition = (self.rect.left, self.rect.top)
+        self.legalMovementPattern = self.movementPattern[:]
+        for position in self.legalMovementPattern[:]:
+            realPosition = [x + y for x, y in zip(unitPosition, [coordinate * 16 for coordinate in position])]
+            if map.getTileAtCoordinate(realPosition[0], realPosition[1]) == 1:
+                self.legalMovementPattern.remove(position)
+        for position in self.legalMovementPattern[:]:
+            realPosition = [x + y for x, y in zip(unitPosition, [coordinate * 16 for coordinate in position])]
+            checkVar = False
+            for neighbor in self.checkSurrounding(map.getTileAtCoordinate,realPosition[0], realPosition[1]).values():
+                if neighbor == 0:
+                    checkVar = True
+                    print "nextToLegal"
+            for neighbor in self.checkSurrounding(self.isOnPlayer, realPosition[0], realPosition[1]).values():
+                if neighbor:
+                    checkVar = True
+                    print "nextToPlayer"
+            reachability = False
+            for neighbor in self.checkSurrounding(self.isReachable, realPosition[0], realPosition[1]).values():
+                if neighbor == True:
+                    reachability = True
+            if not reachability:
+                checkVar = False
+            if not checkVar:
+                self.legalMovementPattern.remove(position)
+                print "Ich bin ein Schnabeltier"
 
 class Map():
     def __init__(self, filename):
@@ -106,11 +157,9 @@ class Map():
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = pygame.mouse.get_pos()
-                print map.getTileAtCoordinate(pos[0], pos[1])
 
 map = Map('map.tmx')
 unit = Unit()
-
 
 while 1:
 
