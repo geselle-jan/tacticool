@@ -68,6 +68,18 @@ class Unit(Rectangle):
                             self.move(deltaX, deltaY)
                             self.showMovement = False
 
+    def checkSurrounding(self,func,x = False, y = False):
+        if not x:
+            x = self.position[0]
+        if not y:
+            y = self.position[1]
+        out = {}
+        out["T"] = func(x - 16, y     )
+        out["L"] = func(x     , y - 16)
+        out["R"] = func(x     , y + 16)
+        out["B"] = func(x + 16, y     )
+        return out
+
 class Map():
     def __init__(self, filename):
         self.tmx_data = load_pygame(filename)
@@ -98,6 +110,7 @@ class Map():
 
 map = Map('map.tmx')
 unit = Unit()
+
 
 while 1:
 
