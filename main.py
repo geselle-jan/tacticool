@@ -1,21 +1,12 @@
-import sys, pygame
+import sys, math, pygame
 import pyscroll
 from pytmx.util_pygame import load_pygame
 pygame.init()
 
-size = width, height = 240, 160
+size = width, height = 480, 320
 black = 0, 0, 0
 
 screen = pygame.display.set_mode(size)
-
-tmx_data = load_pygame("map.tmx")
-
-map_data = pyscroll.TiledMapData(tmx_data)
-
-map_layer = pyscroll.BufferedRenderer(map_data, size)
-
-group = pyscroll.PyscrollGroup(map_layer=map_layer)
-
 
 class Rectangle():
     """A class for rectangles."""
@@ -36,7 +27,7 @@ class Rectangle():
 class Unit(Rectangle):
     """A class for units."""
     def __init__(self):
-        Rectangle.__init__(self, [16,16], [16,16], [255,0,0])
+        Rectangle.__init__(self, [16,16], [16,16], [241,241,241])
         self.movementPattern = [
             [0, -2],
             [-1, -1], [0, -1], [1, -1],
@@ -64,17 +55,6 @@ class Unit(Rectangle):
                 elem.draw(surface)
 
     def update(self):
-
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            self.move(0, -1)
-        if keys[pygame.K_DOWN]:
-            self.move(0, 1)
-        if keys[pygame.K_LEFT]:
-            self.move(-1, 0)
-        if keys[pygame.K_RIGHT]:
-            self.move(1, 0)
-
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = pygame.mouse.get_pos()
@@ -100,8 +80,36 @@ class Unit(Rectangle):
         out["B"] = func(x + 16, y     )
         return out
 
+class Map():
+    def __init__(self, filename):
+        self.tmx_data = load_pygame(filename)
+        self.map_data = pyscroll.TiledMapData(self.tmx_data)
+        self.map_layer = pyscroll.BufferedRenderer(self.map_data, size)
+        self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer)
 
-test = Unit()
+    def getTileAtPosition(self, x, y):
+        layer = self.tmx_data.get_layer_by_name('collision')
+        for tile in layer:
+            if tile[0] is x and tile[1] is y:
+                return tile[2]
+        return False
+
+    def getTileAtCoordinate(self, x, y):
+        x = int(math.floor(x / 16))
+        y = int(math.floor(y / 16))
+        return self.getTileAtPosition(x, y)
+
+    def draw(self, surface):
+        self.group.draw(screen)
+
+    def update(self):
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                pos = pygame.mouse.get_pos()
+                print map.getTileAtCoordinate(pos[0], pos[1])
+
+map = Map('map.tmx')
+unit = Unit()
 
 
 while 1:
@@ -110,12 +118,14 @@ while 1:
     for event in events:
         if event.type == pygame.QUIT: sys.exit()
 
-    test.update()
+    map.update()
+
+    unit.update()
 
     screen.fill(black)
 
-    group.draw(screen)
+    map.draw(screen)
 
-    test.draw(screen)
+    unit.draw(screen)
 
     pygame.display.flip()
