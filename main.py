@@ -36,7 +36,7 @@ class Rectangle():
 class Unit(Rectangle):
     """A class for units."""
     def __init__(self):
-        Rectangle.__init__(self, [0,0], [16,16], [255,0,0])
+        Rectangle.__init__(self, [16,16], [16,16], [255,0,0])
         self.movementPattern = [
             [0, -2],
             [-1, -1], [0, -1], [1, -1],
@@ -88,9 +88,25 @@ class Unit(Rectangle):
                             self.move(deltaX, deltaY)
                             self.showMovement = False
 
+    def checkSurrounding(self,func,x = False, y = False):
+        if not x:
+            x = self.position[0]
+        if not y:
+            y = self.position[1]
+        out = {}
+        out["UL"] = func(x - 16, y - 16)
+        out["UM"] = func(x - 16, y     )
+        out["UR"] = func(x - 16, y + 61)
+        out["ML"] = func(x     , y - 16)
+        out["MR"] = func(x     , y + 16)
+        out["LL"] = func(x + 16, y - 16)
+        out["LM"] = func(x + 16, y     )
+        out["LR"] = func(x + 16, y + 16)
+        return out
 
 
 test = Unit()
+
 
 while 1:
 
