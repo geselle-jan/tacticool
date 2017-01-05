@@ -97,39 +97,39 @@ class Unit(Rectangle):
 
     def isReachable(self, x, y):
         unitPosition = (self.rect.left, self.rect.top)
-        #realPosition = [x - y for x, y in zip([int(coordinate / 16) for coordinate in unitPosition], [int(coordinate / 16) for coordinate in (x, y)])]
         realX = int(x / 16) - int(math.floor(unitPosition[0] / 16))
         realY = int(y / 16) - int(math.floor(unitPosition[1] / 16))
-        print [realX, realY]
-        return [realX, realY] in self.legalMovementPattern
+        return map.getTileAtCoordinate(x, y) == 0 and [realX, realY] in self.movementPattern and not [realX, realY] in self.legalMovementPattern
 
     def generateLegalMovementPattern(self):
         unitPosition = (self.rect.left, self.rect.top)
-        self.legalMovementPattern = self.movementPattern[:]
-        for position in self.legalMovementPattern[:]:
-            realPosition = [x + y for x, y in zip(unitPosition, [coordinate * 16 for coordinate in position])]
-            if map.getTileAtCoordinate(realPosition[0], realPosition[1]) == 1:
-                self.legalMovementPattern.remove(position)
-        for position in self.legalMovementPattern[:]:
-            realPosition = [x + y for x, y in zip(unitPosition, [coordinate * 16 for coordinate in position])]
-            checkVar = False
-            for neighbor in self.checkSurrounding(map.getTileAtCoordinate,realPosition[0], realPosition[1]).values():
-                if neighbor == 0:
-                    checkVar = True
-                    print "nextToLegal"
-            for neighbor in self.checkSurrounding(self.isOnPlayer, realPosition[0], realPosition[1]).values():
-                if neighbor:
-                    checkVar = True
-                    print "nextToPlayer"
-            reachability = False
-            for neighbor in self.checkSurrounding(self.isReachable, realPosition[0], realPosition[1]).values():
-                if neighbor == True:
-                    reachability = True
-            if not reachability:
-                checkVar = False
-            if not checkVar:
-                self.legalMovementPattern.remove(position)
-                print "Ich bin ein Schnabeltier"
+        self.legalMovementPattern = []
+        self.checkList = [[0, 0]]
+        while self.checkList != []:
+            for position in self.checkList:
+                print "Baum"
+                realPosition = [x + y for x, y in zip(unitPosition, [coordinate * 16 for coordinate in position])]
+                self.checkDict = self.checkSurrounding(self.isReachable, realPosition[0], realPosition[1])
+                print self.checkList
+                print self.checkDict
+                for key in self.checkDict.keys():
+                    if self.checkDict[key]:
+                        if key == "T":
+                            self.legalMovementPattern.append([position[0], position[1]-1])
+                            self.checkList.append([position[0], position[1] - 1])
+                        if key == "L":
+                            self.legalMovementPattern.append([position[0] -1, position[1]])
+                            self.checkList.append([position[0] -1, position[1]])
+                        if key == "B":
+                            self.legalMovementPattern.append([position[0], position[1]+1])
+                            self.checkList.append([position[0], position[1] + 1])
+                        if key == "R":
+                            self.legalMovementPattern.append([position[0] +1, position[1]])
+                            self.checkList.append([position[0] +1, position[1]])
+                self.checkList.remove(position)
+
+
+
 
 class Map():
     def __init__(self, filename):
