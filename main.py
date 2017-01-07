@@ -79,17 +79,23 @@ class Unit(Rectangle):
                         )
                     self.showMovement = not self.showMovement
 
-    def checkSurrounding(self,func,x = False, y = False):
+    def checkSurrounding(self,func,x = "NIX", y = "NIX", extralist = False, multiplier = 16):
         unitPosition = (self.rect.left, self.rect.top)
-        if not x:
+        if x == "NIX":
             x = unitPosition[0]
-        if not y:
+        if y == "NIX":
             y = unitPosition[1]
         out = {}
-        out["T"] = func(x     , y - 16)
-        out["L"] = func(x - 16, y     )
-        out["B"] = func(x     , y + 16)
-        out["R"] = func(x + 16, y     )
+        if extralist:
+            out["T"] = func(x             , y - multiplier, extralist)
+            out["L"] = func(x - multiplier, y             , extralist)
+            out["B"] = func(x             , y + multiplier, extralist)
+            out["R"] = func(x + multiplier, y             , extralist)
+        else:
+            out["T"] = func(x             , y - multiplier)
+            out["L"] = func(x - multiplier, y             )
+            out["B"] = func(x             , y + multiplier)
+            out["R"] = func(x + multiplier, y             )
         return out
 
     def isOnPlayer(self, x, y):
@@ -107,11 +113,8 @@ class Unit(Rectangle):
         self.checkList = [[0, 0]]
         while self.checkList != []:
             for position in self.checkList:
-                print "Baum"
                 realPosition = [x + y for x, y in zip(unitPosition, [coordinate * 16 for coordinate in position])]
                 self.checkDict = self.checkSurrounding(self.isReachable, realPosition[0], realPosition[1])
-                print self.checkList
-                print self.checkDict
                 for key in self.checkDict.keys():
                     if self.checkDict[key]:
                         if key == "T":
@@ -128,6 +131,43 @@ class Unit(Rectangle):
                             self.checkList.append([position[0] +1, position[1]])
                 self.checkList.remove(position)
 
+    def girlScout(self, doSiDos):
+        thinMints = []
+        shortBreadSlashTrefoils = self.getScore(0,0,doSiDos)
+        eternalScout = {shortBreadSlashTrefoils:[[0,0]]}
+        toffeeTastic = True
+        while toffeeTastic:
+            trios = eternalScout.keys()[0]
+            for score in eternalScout.keys():
+                if score < trios:
+                    trios = score
+            position = eternalScout.setdefault(trios, [[0,0]])[-1]
+            if not position in thinMints:
+                caramelDeLites = self.checkSurrounding(self.getScore, position[0], position[1], doSiDos, 1)
+                for path in caramelDeLites.keys():
+                        if caramelDeLites[path]:
+                            if path == "T":
+                                eternalScout[caramelDeLites[path]] = eternalScout[trios] + [[position[0], position[1] - 1]]
+                            if path == "L":
+                                eternalScout[caramelDeLites[path]] = eternalScout[trios] + [[position[0] - 1, position[1]]]
+                            if path == "B":
+                                eternalScout[caramelDeLites[path]] = eternalScout[trios] + [[position[0], position[1] + 1]]
+                            if path == "R":
+                                eternalScout[caramelDeLites[path]] = eternalScout[trios] + [[position[0] + 1, position[1]]]
+            del eternalScout[trios]
+            thinMints.append(position)
+            for key in eternalScout.keys():
+                if doSiDos in eternalScout[key]:
+                    toffeeTastic = False
+                    return eternalScout[key]
+            if eternalScout == {}:
+                return False
+
+    def getScore(self, x, y, destination):
+        if [x,y] in self.legalMovementPattern or [x,y] == [0,0]:
+            return abs(math.sqrt(x**2+y**2)) + abs(math.sqrt((destination[0]-x)**2+(destination[1]-y)**2))
+        else:
+            return False
 
 
 
@@ -160,6 +200,8 @@ class Map():
 
 map = Map('map.tmx')
 unit = Unit()
+print unit.girlScout([1,-2])
+
 
 while 1:
 
