@@ -3,9 +3,9 @@ import pygame, math
 
 class Unit(Rectangle):
     """A class for units."""
-    def __init__(self, game):
+    def __init__(self, game, position):
         self.game = game
-        Rectangle.__init__(self, self.game, [16,32], [16,16], [241,241,241])
+        Rectangle.__init__(self, self.game, position, [16,16], [241,241,241])
         self.movementPattern = [
                                           [ 0, -3],
                                 [-1, -2], [ 0, -2], [ 1, -2],
