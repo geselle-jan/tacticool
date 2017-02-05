@@ -3,9 +3,10 @@ import pygame, math
 
 class Unit(Rectangle):
     """A class for units."""
-    def __init__(self, game):
+    def __init__(self, game, position):
         self.game = game
-        Rectangle.__init__(self, self.game, [16,32], [16,16], [241,241,241])
+        self.finishedTurn = False
+        Rectangle.__init__(self, self.game, position, [16,16], [241,241,241])
         self.movementPattern = [
                                           [ 0, -3],
                                 [-1, -2], [ 0, -2], [ 1, -2],
@@ -24,10 +25,18 @@ class Unit(Rectangle):
                 Rectangle(self.game, realPosition, self.size, [0, 255, 0], 1)
             )
 
+    def finishTurn(self):
+        self.finishedTurn = True
+        self.changeColor([141, 141, 141])
+
+    def unfinishTurn(self):
+        self.finishedTurn = False
+        self.changeColor([241, 241, 241])
+
     def move(self, x, y):
         Rectangle.move(self, x, y)
-        """for index, elem in enumerate(self.movementRectangles):
-            self.movementRectangles[index].move(x, y)"""
+        self.finishTurn()
+
 
     def draw(self, screen):
         Rectangle.draw(self, screen)
@@ -46,7 +55,7 @@ class Unit(Rectangle):
                             deltaY = movementRectangle.rect.top - self.rect.top
                             self.move(deltaX, deltaY)
                             self.showMovement = False
-                elif self.rect.collidepoint(pos):
+                elif self.rect.collidepoint(pos) and not self.finishedTurn:
                     unitPosition = (self.rect.left, self.rect.top)
                     self.movementRectangles = []
                     self.generateLegalMovementPattern()
@@ -146,3 +155,6 @@ class Unit(Rectangle):
             return abs(math.sqrt(x**2+y**2)) + abs(math.sqrt((destination[0]-x)**2+(destination[1]-y)**2))
         else:
             return False
+
+    def endTurn(self):
+        self.unfinishTurn()
