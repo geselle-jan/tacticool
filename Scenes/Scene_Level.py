@@ -18,7 +18,8 @@ class Scene_Level(Scene):
         self.ui = UI(self.game)
 
     def endTurn(self):
-        print 'endTurn'
+        for unit in self.units:
+            unit.endTurn()
 
     def update(self, deltaTime, events):
         self.map.update(deltaTime, events)

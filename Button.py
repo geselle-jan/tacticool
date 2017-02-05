@@ -7,6 +7,7 @@ class Button():
         self.init(position, label, function)
 
     def init(self, position, label, function):
+        self.function = function
         self.position = position
         self.background = Rectangle(self.game, position, [48,16], [32,32,32])
         pygame.font.init()
@@ -14,7 +15,11 @@ class Button():
         self.textSurface = self.font.render(label, False, (255, 255, 255))
 
     def update(self, deltaTime, events):
-        pass
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                pos = pygame.mouse.get_pos()
+                if self.background.rect.collidepoint(pos):
+                    self.function()
 
     def draw(self, screen):
         self.background.draw(screen)
