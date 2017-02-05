@@ -13,5 +13,8 @@ class Rectangle():
     def move(self, x, y):
         self.rect = self.rect.move(x, y)
 
+    def changeColor(self, color):
+        self.color = color
+
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect, self.stroke)

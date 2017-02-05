@@ -3,6 +3,7 @@ import importlib
 class SceneManager():
     def __init__(self, game):
         self.game = game
+        self.currentSceneId = ''
         self.currentScene = None
 
     def getSceneClassByName(self, name):
@@ -20,6 +21,7 @@ class SceneManager():
         sceneClass = self.getSceneClassByName(sceneId)
         if sceneClass != None:
             self.currentScene = sceneClass(self.game)
+            self.currentSceneId = sceneId
 
     def update(self, deltaTime, events):
         if self.currentScene != None:
