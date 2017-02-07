@@ -48,6 +48,12 @@ class Unit(Rectangle):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = pygame.mouse.get_pos()
+                pos = [pos[0], pos[1]]
+                if hasattr(self.game, 'scrollableLayer'):
+                    pos[0] = pos[0] - self.game.scrollableLayer.position[0]
+                    pos[1] = pos[1] - self.game.scrollableLayer.position[1]
+                    pos[0] = pos[0] - self.game.scrollableLayer.offset[0]
+                    pos[1] = pos[1] - self.game.scrollableLayer.offset[1]
                 if self.showMovement:
                     for movementRectangle in self.movementRectangles:
                         if movementRectangle.rect.collidepoint(pos):

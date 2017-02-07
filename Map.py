@@ -6,7 +6,8 @@ class Map():
         self.game = game
         self.tmx_data = load_pygame('assets/maps/' + filename)
         self.map_data = pyscroll.TiledMapData(self.tmx_data)
-        self.map_layer = pyscroll.BufferedRenderer(self.map_data, self.game.size)
+        self.size = [self.map_data.map_size[0] * self.map_data.tile_size[0], self.map_data.map_size[1] * self.map_data.tile_size[1]]
+        self.map_layer = pyscroll.BufferedRenderer(self.map_data, self.size)
         self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer)
 
     def getTileAtPosition(self, x, y):
