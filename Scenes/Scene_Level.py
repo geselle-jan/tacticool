@@ -28,15 +28,16 @@ class Scene_Level(Scene):
             unit.endTurn()
 
     def update(self, deltaTime, events):
+        scrollSpeed = 32 * deltaTime
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            self.scrollableLayer.changeOffsetBy([0,1])
-        if keys[pygame.K_DOWN]:
-            self.scrollableLayer.changeOffsetBy([0,-1])
-        if keys[pygame.K_LEFT]:
-            self.scrollableLayer.changeOffsetBy([1,0])
-        if keys[pygame.K_RIGHT]:
-            self.scrollableLayer.changeOffsetBy([-1,0])
+        if keys[pygame.K_UP] or self.game.cursor.bounds['top']:
+            self.scrollableLayer.changeOffsetBy([0, 1 * scrollSpeed])
+        if keys[pygame.K_DOWN] or self.game.cursor.bounds['bottom']:
+            self.scrollableLayer.changeOffsetBy([0, -1 * scrollSpeed])
+        if keys[pygame.K_LEFT] or self.game.cursor.bounds['left']:
+            self.scrollableLayer.changeOffsetBy([1 * scrollSpeed, 0])
+        if keys[pygame.K_RIGHT] or self.game.cursor.bounds['right']:
+            self.scrollableLayer.changeOffsetBy([-1 * scrollSpeed, 0])
 
         self.map.update(deltaTime, events)
         for unit in self.units:

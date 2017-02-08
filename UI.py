@@ -1,5 +1,5 @@
 from Button import Button
-import pygame, os
+import pygame, os, sys
 
 class UI():
     def __init__(self, game):
@@ -9,6 +9,7 @@ class UI():
     def init(self):
         self.buttons = {}
         self.buttons['end_turn'] = Button(self.game, [32, 256], 'End Turn', lambda: self.game.sceneManager.currentScene.endTurn())
+        self.buttons['quit'] = Button(self.game, [32, 288], 'Quit', lambda: sys.exit())
         self.background = pygame.image.load(os.path.join('assets', 'sprites', 'frame.png'))
 
     def update(self, deltaTime, events):
