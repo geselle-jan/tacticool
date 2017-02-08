@@ -7,4 +7,3 @@
 
 - add visual representation to pathdinding fuction
 - implement class coordinate
-Contact Contact
