@@ -1,4 +1,8 @@
 import pygame
+""" Das geht ja nich das simon mehr commits hier hat als ich,
+also änder ich jetz ganz viele Dateien
+-The_Lie0
+"""
 
 class Rectangle():
     """A class for rectangles."""
