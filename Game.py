@@ -1,5 +1,6 @@
 import sys, pygame
 from SceneManager import SceneManager
+from Cursor import Cursor
 
 class Game():
     def __init__(self):
@@ -10,18 +11,25 @@ class Game():
         self.screen = pygame.display.set_mode(self.size)
         self.clock = pygame.time.Clock()
         self.sceneManager.setScene('Menu')
+        self.cursor = Cursor(self)
         while 1:
             deltaTime = 1 / float(self.clock.tick(60))
             events = pygame.event.get()
             for event in events:
-                if event.type == pygame.QUIT: sys.exit()
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        sys.exit()
             self.update(deltaTime, events)
             self.screen.fill(self.backgroundColor)
             self.draw(self.screen)
             pygame.display.flip()
 
     def update(self, deltaTime, events):
+        self.cursor.update(deltaTime, events)
         self.sceneManager.update(deltaTime, events)
 
     def draw(self, screen):
         self.sceneManager.draw(screen)
+        self.cursor.draw(screen)
