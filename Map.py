@@ -1,5 +1,9 @@
 import math, pygame, pyscroll
 from pytmx.util_pygame import load_pygame
+""" Das geht ja nich das simon mehr commits hier hat als ich,
+also änder ich jetz ganz viele Dateien
+-The_Lie0
+"""
 
 class Map():
     def __init__(self, game, filename):
