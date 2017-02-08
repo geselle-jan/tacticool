@@ -47,7 +47,7 @@ class Unit(Rectangle):
     def update(self, deltaTime, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                pos = pygame.mouse.get_pos()
+                pos = self.game.cursor.get_pos()
                 pos = [pos[0], pos[1]]
                 if hasattr(self.game, 'scrollableLayer'):
                     pos[0] = pos[0] - self.game.scrollableLayer.position[0]
