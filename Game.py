@@ -1,6 +1,10 @@
 import sys, pygame
 from SceneManager import SceneManager
 from Cursor import Cursor
+""" Das geht ja nich das simon mehr commits hier hat als ich,
+also änder ich jetz ganz viele Dateien
+-The_Lie0
+"""
 
 class Game():
     def __init__(self):
