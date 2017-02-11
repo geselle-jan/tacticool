@@ -39,6 +39,11 @@ class Scene_Level(Scene):
         if keys[pygame.K_RIGHT] or self.game.cursor.bounds['right']:
             self.scrollableLayer.changeOffsetBy([-1 * scrollSpeed, 0])
 
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.endTurn()
+
         self.map.update(deltaTime, events)
         for unit in self.units:
             unit.update(deltaTime, events)
