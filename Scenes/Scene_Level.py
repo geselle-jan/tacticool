@@ -10,8 +10,8 @@ class Scene_Level(Scene):
         Scene.__init__(self, game)
 
     def init(self):
-        self.scrollablePosition = [32,32]
-        self.scrollableSize = [416,160]
+        self.scrollablePosition = [0, 0]
+        self.scrollableSize = [480, 240]
         self.map = Map(self.game, 'map.tmx')
         self.game.map = self.map
         self.scrollableLayer = ScrollableLayer(self.game, self.scrollablePosition, self.scrollableSize, [0,0], self.map.size)
@@ -38,6 +38,11 @@ class Scene_Level(Scene):
             self.scrollableLayer.changeOffsetBy([1 * scrollSpeed, 0])
         if keys[pygame.K_RIGHT] or self.game.cursor.bounds['right']:
             self.scrollableLayer.changeOffsetBy([-1 * scrollSpeed, 0])
+
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.endTurn()
 
         self.map.update(deltaTime, events)
         for unit in self.units:
