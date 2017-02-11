@@ -10,8 +10,8 @@ class Scene_Level(Scene):
         Scene.__init__(self, game)
 
     def init(self):
-        self.scrollablePosition = [32,32]
-        self.scrollableSize = [416,160]
+        self.scrollablePosition = [0, 0]
+        self.scrollableSize = [480, 240]
         self.map = Map(self.game, 'map.tmx')
         self.game.map = self.map
         self.scrollableLayer = ScrollableLayer(self.game, self.scrollablePosition, self.scrollableSize, [0,0], self.map.size)
