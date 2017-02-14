@@ -17,10 +17,10 @@ class Scene_Level(Scene):
         self.scrollableLayer = ScrollableLayer(self.game, self.scrollablePosition, self.scrollableSize, [0,0], self.map.size)
         self.game.scrollableLayer = self.scrollableLayer
         self.units = []
-        self.units.append(Unit(self.game, [16,32]))
-        self.units.append(Unit(self.game, [16,64]))
-        self.units.append(Unit(self.game, [16,96]))
-        self.units.append(Unit(self.game, [16,128]))
+        self.units.append(Unit(self.game, [96,64]))
+        self.units.append(Unit(self.game, [96,96]))
+        self.units.append(Unit(self.game, [96,128]))
+        self.units.append(Unit(self.game, [96,160]))
         self.ui = UI(self.game)
 
     def endTurn(self):

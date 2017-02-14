@@ -6,7 +6,7 @@ class Unit(Rectangle):
     def __init__(self, game, position):
         self.game = game
         self.finishedTurn = False
-        Rectangle.__init__(self, self.game, position, [16,16], [241,241,241])
+        Rectangle.__init__(self, self.game, position, [16,16], [136,0,0])
         self.movementPattern = [
                                           [ 0, -3],
                                 [-1, -2], [ 0, -2], [ 1, -2],
@@ -27,11 +27,11 @@ class Unit(Rectangle):
 
     def finishTurn(self):
         self.finishedTurn = True
-        self.changeColor([141, 141, 141])
+        self.changeColor([64, 64, 64])
 
     def unfinishTurn(self):
         self.finishedTurn = False
-        self.changeColor([241, 241, 241])
+        self.changeColor([136, 0, 0])
 
     def move(self, x, y):
         Rectangle.move(self, x, y)
@@ -68,7 +68,7 @@ class Unit(Rectangle):
                     for position in self.legalMovementPattern:
                         realPosition = [x + y for x, y in zip(unitPosition, [coordinate * 16 for coordinate in position])]
                         self.movementRectangles.append(
-                            Rectangle(self.game, realPosition, self.size, [0, 255, 0], 1)
+                            Rectangle(self.game, realPosition, self.size, [64, 64, 64], 1)
                         )
                     self.showMovement = not self.showMovement
 
