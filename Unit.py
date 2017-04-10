@@ -17,6 +17,7 @@ class Unit(Rectangle):
 										  [ 0,  3],
 		]
 		self.legalMovementPattern = self.movementPattern[:]
+		self.forbiddenList = []
 		self.showMovement = False
 		self.movementRectangles = []
 		for position in self.legalMovementPattern:
@@ -24,6 +25,7 @@ class Unit(Rectangle):
 			self.movementRectangles.append(
 				Rectangle(self.game, realPosition, self.size, [0, 255, 0], 1)
 			)
+		self.generateForbiddenList(False, True, False)
 
 	def finishTurn(self):
 		self.finishedTurn = True
@@ -62,14 +64,13 @@ class Unit(Rectangle):
 							self.move(deltaX, deltaY)
 							self.showMovement = False
 				elif self.rect.collidepoint(pos) and not self.finishedTurn:
-					self.girlScout(5)
-					unitPosition = (self.rect.left, self.rect.top)
+					print self.forbiddenList
+					ways = self.girlScout(5,self.forbiddenList)
 					self.movementRectangles = []
-					self.generateLegalMovementPattern()
+					self.generateLegalMovementPattern(ways)
 					for position in self.legalMovementPattern:
-						realPosition = [x + y for x, y in zip(unitPosition, [coordinate * 16 for coordinate in position])]
 						self.movementRectangles.append(
-							Rectangle(self.game, realPosition, self.size, [64, 64, 64], 1)
+							Rectangle(self.game, position, self.size, [64, 64, 64], 1)
 						)
 					self.showMovement = not self.showMovement
 
@@ -101,29 +102,10 @@ class Unit(Rectangle):
 		realY = int(y / 16) - int(math.floor(unitPosition[1] / 16))
 		return self.game.map.getTileAtCoordinate(x, y) == 0 and [realX, realY] in self.movementPattern and not [realX, realY] in self.legalMovementPattern
 
-	def generateLegalMovementPattern(self):
-		unitPosition = (self.rect.left, self.rect.top)
+	def generateLegalMovementPattern(self, waysList):
 		self.legalMovementPattern = []
-		self.checkList = [[0, 0]]
-		while self.checkList != []:
-			for position in self.checkList:
-				realPosition = [x + y for x, y in zip(unitPosition, [coordinate * 16 for coordinate in position])]
-				self.checkDict = self.checkSurrounding(self.isReachable, realPosition[0], realPosition[1])
-				for key in self.checkDict.keys():
-					if self.checkDict[key]:
-						if key == "T":
-							self.legalMovementPattern.append([position[0], position[1]-1])
-							self.checkList.append([position[0], position[1] - 1])
-						if key == "L":
-							self.legalMovementPattern.append([position[0] -1, position[1]])
-							self.checkList.append([position[0] -1, position[1]])
-						if key == "B":
-							self.legalMovementPattern.append([position[0], position[1]+1])
-							self.checkList.append([position[0], position[1] + 1])
-						if key == "R":
-							self.legalMovementPattern.append([position[0] +1, position[1]])
-							self.checkList.append([position[0] +1, position[1]])
-				self.checkList.remove(position)
+		for way in waysList:
+			self.legalMovementPattern.append((way[-1][0]*16,way[-1][1]*16))
 
 	def girlScout(self, movesLeft, forbiddenList = [], way = [], currentPos = "notSet"):
 		if currentPos == "notSet":
@@ -142,9 +124,20 @@ class Unit(Rectangle):
 			for pos in [(currentPos[0] + 1, currentPos[1]), (currentPos[0], currentPos[1] + 1),
 						(currentPos[0] - 1, currentPos[1]), (currentPos[0], currentPos[1] - 1)]:
 				for newWay in self.girlScout(movesLeft - 1, forbiddenList, loacalWay, pos):
-					print newWay
 					outList.append(newWay)
 			return outList
+
+	def generateForbiddenList(self, waterAllowed, groundAllowed, MountainsAllowed):
+		mapSize = self.game.map.size
+		self.forbiddenList = []
+		for xCoord in range(mapSize[0]/16):
+			for yCoord in range(mapSize[1]/16):
+				if self.game.map.getTileAtPosition(xCoord,yCoord) in [2,3,4,5,6,22,23,24] and not waterAllowed :
+					self.forbiddenList.append((xCoord,yCoord))
+				elif self.game.map.getTileAtPosition(xCoord,yCoord) in (range(8,16) + range(23,32) + [38,53,54,68,69,83,84]) and not groundAllowed :
+					self.forbiddenList.append((xCoord, yCoord))
+				elif self.game.map.getTileAtPosition(xCoord,yCoord) in (range(69,73) + range(84,88) + range(98,103) + range(113,118)) and not groundAllowed :
+					self.forbiddenList.append((xCoord, yCoord))
 
 	def endTurn(self):
 		self.unfinishTurn()
