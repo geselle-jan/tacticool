@@ -1,5 +1,7 @@
 import math, pygame, pyscroll
 from pytmx.util_pygame import load_pygame
+""" Lel
+"""
 
 class Map():
     def __init__(self, game, filename):
@@ -11,7 +13,7 @@ class Map():
         self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer)
 
     def getTileAtPosition(self, x, y):
-        layer = self.tmx_data.get_layer_by_name('collision')
+        layer = self.tmx_data.get_layer_by_name('background')
         for tile in layer:
             if tile[0] is x and tile[1] is y:
                 return tile[2]
